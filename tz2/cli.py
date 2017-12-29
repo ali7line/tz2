@@ -1,4 +1,20 @@
+from bs4 import BeautifulSoup
 import click
+
+
+def parse(url):
+    bsObj = BeautifulSoup(html, 'html5lib')
+    results = bsObj.find_all('div', class_='results')[0]
+    total_number = results.find_all('h2')[0].text
+    rows = results.find_all('dl')
+    info = []
+    for i, r in enumerate(rows):
+        name = r.a.text
+        category = r.a.next_sibling
+        verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
+        info.append((i, name, category, verfied, age, size, peers, leech))
+        #print('[{0}]: {1}'.format(i, name))
+        print(info[i])
 
 
 @click.command()
