@@ -1,21 +1,30 @@
+from beautifultable import BeautifulTable
 from bs4 import BeautifulSoup
 import click
 
 
-def parse(html):
-    bsObj = BeautifulSoup(html, 'html5lib')
+def parse(html_file_name):
+    col = 30
+
+    with open(html_file_name, 'r') as f:
+        html = f.read()
+
+    bsObj = BeautifulSoup(html, 'html.parser')
     results = bsObj.find_all('div', class_='results')[0]
     total_number = results.find_all('h2')[0].text
     rows = results.find_all('dl')
-    info = []
+    table = BeautifulTable()
+    table.column_headers = ["id", "name", "cat", "verif", "age", "size", "peers", "leech"]
     for i, r in enumerate(rows):
         name = r.a.text
         category = r.a.next_sibling
         verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
-        info.append((i, name, category, verfied, age, size, peers, leech))
+        table.append_row((i, name[:col], category, verfied, age, size, peers, leech))
         # print('[{0}]: {1}'.format(i, name))
-        print(info[i])
-        return total_number
+
+    click.echo(table)
+
+    return total_number
 
 
 @click.command()
@@ -25,6 +34,8 @@ def parse(html):
 @click.option('--sort-by', type=click.Choice(['peers', 'date', 'rating', 'size']))
 def main(search, verified, adult, sort_by):
     """seach and get infohash from torrentz2.eu"""
+    click.clear()
+
     if not search:
         search = ''
 
@@ -56,4 +67,7 @@ def main(search, verified, adult, sort_by):
         '+'.join(search),
         safe_suffix)
         )
-    click.echo('hi')
+    click.echo('downloading ...')
+    click.echo('parsing ...')
+    total = parse('/tmp/torrent.html')
+    click.echo(total)

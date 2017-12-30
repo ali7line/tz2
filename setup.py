@@ -3,7 +3,7 @@ seach and get infohash from torrentz2.eu
 """
 from setuptools import find_packages, setup
 
-dependencies = ['click', 'beautifulsoup4']
+dependencies = ['click', 'beautifulsoup4', 'beautifultable']
 
 setup(
     name='tz2-cli',
