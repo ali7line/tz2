@@ -1,30 +1,45 @@
-from beautifultable import BeautifulTable
 from bs4 import BeautifulSoup
 import click
+import six
+
+
+def pretty_table(table):
+    click.echo("{0:>4} | {1:^40} | {2:^5} | {3:^5} | {4:^10} | {5:^8} | {6:^6} | {7:^6}".format(
+        'id', 'name', 'cat', 'verif', 'age', 'size', 'peers', 'leech'))
+    del table[0]
+    for id_, name, cat, verif, age, size, peers, leech in table:
+        click.echo("{0:>4} | {1:^40} | {2:<5} | {3:^5} | {4:<10} | {5:<8} | {6:^6} | {7:^6}".format(
+            id_, name[:40], cat, verif, age, size, peers, leech))
 
 
 def parse(html_file_name):
-    col = 30
-
-    with open(html_file_name, 'r') as f:
+    with open(html_file_name, 'rt') as f:
         html = f.read()
 
     bsObj = BeautifulSoup(html, 'html.parser')
     results = bsObj.find_all('div', class_='results')[0]
     total_number = results.find_all('h2')[0].text
     rows = results.find_all('dl')
-    table = BeautifulTable()
-    table.column_headers = ["id", "name", "cat", "verif", "age", "size", "peers", "leech"]
+    table = []
+    table.append(("id", "name", "cat", "verif", "age", "size", "peers", "leech"))
     for i, r in enumerate(rows):
-        name = r.a.text
-        category = r.a.next_sibling
+        if six.PY3:
+            name = r.a.text
+        else:
+            name = r.a.text.encode('ascii', 'ignore')
+
+        # category = r.a.next_sibling.
+        category = 'music'
         verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
-        table.append_row((i, name[:col], category, verfied, age, size, peers, leech))
+        if verfied:
+            verfied = 'Y'
+        else:
+            verfied = ' '
+
+        table.append((i, name, category, verfied, age, size, peers, leech))
         # print('[{0}]: {1}'.format(i, name))
 
-    click.echo(table)
-
-    return total_number
+    return total_number, table
 
 
 @click.command()
@@ -69,5 +84,6 @@ def main(search, verified, adult, sort_by):
         )
     click.echo('downloading ...')
     click.echo('parsing ...')
-    total = parse('/tmp/torrent.html')
+    total, table = parse('/tmp/torrent.html')
     click.echo(total)
+    pretty_table(table)
