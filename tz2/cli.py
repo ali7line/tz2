@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import click
-import six
 
 
 def pretty_table(table):
@@ -23,11 +22,7 @@ def parse(html_file_name):
     table = []
     table.append(("id", "name", "cat", "verif", "age", "size", "peers", "leech"))
     for i, r in enumerate(rows):
-        if six.PY3:
-            name = r.a.text
-        else:
-            name = r.a.text.encode('ascii', 'ignore')
-
+        name = r.a.text
         # category = r.a.next_sibling.
         category = 'music'
         verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
