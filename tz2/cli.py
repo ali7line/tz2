@@ -5,7 +5,7 @@ import click
 def pretty_table(table):
     click.echo("{0:>4} | {1:^40} | {2:^5} | {3:^5} | {4:^10} | {5:^8} | {6:^6} | {7:^6}".format(
         'id', 'name', 'cat', 'verif', 'age', 'size', 'peers', 'leech'))
-    del table[0]
+    click.echo("-"*(4+40+5+5+10+8+6+6+21))
     for id_, name, cat, verif, age, size, peers, leech in table:
         click.echo("{0:>4} | {1:^40} | {2:<5} | {3:^5} | {4:<10} | {5:<8} | {6:^6} | {7:^6}".format(
             id_, name[:40], cat, verif, age, size, peers, leech))
@@ -20,7 +20,6 @@ def parse(html_file_name):
     total_number = results.find_all('h2')[0].text
     rows = results.find_all('dl')
     table = []
-    table.append(("id", "name", "cat", "verif", "age", "size", "peers", "leech"))
     for i, r in enumerate(rows):
         name = r.a.text
         # category = r.a.next_sibling.
@@ -69,7 +68,7 @@ def main(search, verified, adult, sort_by):
     if adult:
         safe_suffix = '&safe=0'
     else:
-        safe_suffix = ''
+        safe_suffix = '&safe=1'
 
     click.echo('https://torrentz2.eu/{0}{1}?f={2}{3}'.format(
         search_type,
