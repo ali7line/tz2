@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import click
 
 
-def parse(url):
+def parse(html):
     bsObj = BeautifulSoup(html, 'html5lib')
     results = bsObj.find_all('div', class_='results')[0]
     total_number = results.find_all('h2')[0].text
@@ -13,19 +13,23 @@ def parse(url):
         category = r.a.next_sibling
         verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
         info.append((i, name, category, verfied, age, size, peers, leech))
-        #print('[{0}]: {1}'.format(i, name))
+        # print('[{0}]: {1}'.format(i, name))
         print(info[i])
+        return total_number
 
 
 @click.command()
-@click.argument('search',  nargs=-1, required=True)
-@click.option('--verfied', '-v', is_flag=True, help='Search only for verfied torrents')
+@click.argument('search',  nargs=-1, required=False)
+@click.option('--verified', '-v', is_flag=True, help='Search only for verified torrents')
 @click.option('--adult', '-a', is_flag=True, help='Search only for safe torrents')
 @click.option('--sort-by', type=click.Choice(['peers', 'date', 'rating', 'size']))
-def main(search, verfied, adult, sort_by):
+def main(search, verified, adult, sort_by):
     """seach and get infohash from torrentz2.eu"""
-    if verfied:
-        search_type = 'verfied'
+    if not search:
+        search = ''
+
+    if verified:
+        search_type = 'verified'
     else:
         search_type = 'search'
 
@@ -52,3 +56,4 @@ def main(search, verfied, adult, sort_by):
         '+'.join(search),
         safe_suffix)
         )
+    click.echo('hi')
