@@ -1,7 +1,7 @@
 import click
 
 from .utils.pretty_table import pretty_table
-from .utils.url import parse_search
+from .utils.url import parse_search, get_url
 
 
 @click.command()
@@ -38,14 +38,18 @@ def main(search, verified, adult, sort_by):
     else:
         safe_suffix = '&safe=1'
 
-    click.echo('https://torrentz2.eu/{0}{1}?f={2}{3}'.format(
+    search_url = 'https://torrentz2.eu/{0}{1}?f={2}{3}'.format(
         search_type,
         search_suffix,
         '+'.join(search),
         safe_suffix)
-        )
+
+    click.echo(search_url)
+        
     click.echo('downloading ...')
+    html_text = get_url(search_url)
     click.echo('parsing ...')
-    total, table = parse_search('/tmp/torrent.html')
+    total, table = parse_search(html_text)
+
     click.echo(total)
     pretty_table(table)
