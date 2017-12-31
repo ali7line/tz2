@@ -1,39 +1,7 @@
-from bs4 import BeautifulSoup
 import click
 
-
-def pretty_table(table):
-    click.echo("{0:>4} | {1:^40} | {2:^5} | {3:^5} | {4:^10} | {5:^8} | {6:^6} | {7:^6}".format(
-        'id', 'name', 'cat', 'verif', 'age', 'size', 'peers', 'leech'))
-    click.echo("-"*(4+40+5+5+10+8+6+6+21))
-    for id_, name, cat, verif, age, size, peers, leech in table:
-        click.echo("{0:>4} | {1:^40} | {2:<5} | {3:^5} | {4:<10} | {5:<8} | {6:^6} | {7:^6}".format(
-            id_, name[:40], cat, verif, age, size, peers, leech))
-
-
-def parse(html_file_name):
-    with open(html_file_name, 'rt') as f:
-        html = f.read()
-
-    bsObj = BeautifulSoup(html, 'html.parser')
-    results = bsObj.find_all('div', class_='results')[0]
-    total_number = results.find_all('h2')[0].text
-    rows = results.find_all('dl')
-    table = []
-    for i, r in enumerate(rows):
-        name = r.a.text
-        # category = r.a.next_sibling.
-        category = 'music'
-        verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
-        if verfied:
-            verfied = 'Y'
-        else:
-            verfied = ' '
-
-        table.append((i, name, category, verfied, age, size, peers, leech))
-        # print('[{0}]: {1}'.format(i, name))
-
-    return total_number, table
+from .utils.pretty_table import pretty_table
+from .utils.url import parse_search
 
 
 @click.command()
@@ -78,6 +46,6 @@ def main(search, verified, adult, sort_by):
         )
     click.echo('downloading ...')
     click.echo('parsing ...')
-    total, table = parse('/tmp/torrent.html')
+    total, table = parse_search('/tmp/torrent.html')
     click.echo(total)
     pretty_table(table)
