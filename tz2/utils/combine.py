@@ -1,5 +1,6 @@
 import sys
 
+
 def combine(hashinfo, trackers):
     if hashinfo.isalnum():
         trackinfo = '&tr=' + '&tr='.join(trackers)
@@ -8,6 +9,7 @@ def combine(hashinfo, trackers):
         sys.exit('ERROR: Bad hashinfo')
 
     return result
+
 
 if __name__ == '__main__':
     hashinfo = '204a1789dd04e4d8f5a4e098e8f777794888f4ad'

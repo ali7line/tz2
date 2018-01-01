@@ -37,7 +37,6 @@ def parse_link(html_text):
     trackers_table = bsObj.find_all('div', class_='trackers')[0]
     hashinfo = trackers_table.h2.text.split(' ')[-1]
     trackers = [t.text for t in trackers_table.find_all('dt')]
-    
 
     result = (hashinfo, trackers)
     return result

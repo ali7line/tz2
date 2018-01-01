@@ -23,7 +23,10 @@ def main(search, verified, adult, sort_by):
 
     if sort_by:
         if sort_by == 'peers':
-            search_suffix = 'P'
+            if verified:
+                search_suffix = 'P'
+            else:
+                search_suffix = ''
         if sort_by == 'date':
             search_suffix = 'A'
         if sort_by == 'rating':
@@ -45,7 +48,6 @@ def main(search, verified, adult, sort_by):
         safe_suffix)
 
     click.echo(search_url)
-        
     click.echo('downloading ...')
     html_text = get_url(search_url)
     click.echo('parsing ...')
