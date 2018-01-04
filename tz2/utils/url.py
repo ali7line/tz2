@@ -18,8 +18,8 @@ def parse_search(html_text):
     for i, r in enumerate(rows):
         name = r.a.text
         link = 'https//torrentz2.eu' + r.a['href']
-        # category = r.a.next_sibling.
-        category = 'music'
+        category = r.a.next_sibling
+        # category = 'music'
         verfied, age, size, peers, leech = list(map(lambda x: x.text, r.find_all('span')))
         if verfied:
             verfied = 'Y'
