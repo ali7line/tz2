@@ -7,17 +7,32 @@ def remove_nonlatin(text):
 
 
 def pretty_table(table, limit_rows=25):
-    click.echo("{0:>4} | {1:^40} | {2:^25} | {3:^5} | {4:^10} | {5:^8} | {6:^6} | {7:^6}".format(
-        'id', 'name', 'cat', 'verif', 'age', 'size', 'peers', 'leech'))
-    click.echo("-"*(4+40+5+5+10+8+6+6+21+20))
+    width = {'w_id': 4, 'w_name': 40, 'w_cat': 25, 'w_verif': 5, 'w_age': 10, 'w_size': 8, 'w_peers': 6, 'w_leech': 6}
+    total_width = sum(width.values()) + 3*8
+
+    row = "{id_:>{w_id}} | {name:^{w_name}} | {cat:^{w_cat}} | {verif:^{w_verif}} | " + \
+        "{age:^{w_age}} | {size:^{w_size}} | {peers:^{w_peers}} | {leech:^{w_leech}}"
+
+    data = {'id_': 'id', 'name': 'name', 'cat': 'cat', 'verif': 'verif', 'age': 'age', 'size': 'size',
+            'peers': 'peers', 'leech': 'leech'}
+
+    z = {**data, **width}
+
+    click.echo(row.format(**z))
+
+    click.echo("-"*total_width)
     if len(table) > limit_rows:
         table = table[:limit_rows]
+
     for id_, name, cat, verif, age, size, peers, leech, links in table:
-        new_cat = remove_nonlatin(cat)
-        new_name = remove_nonlatin(name)
+        cat = remove_nonlatin(cat)
+
+        name = remove_nonlatin(name)
         if len(name) > 40:
-            click.echo("{0:>4} | {1:^40} | {2:<25} | {3:^5} | {4:<10} | {5:<8} | {6:^6} | {7:^6}".format(
-                id_, new_name[:40], new_cat, verif, age, size, peers, leech))
-        else:
-            click.echo("{0:>4} | {1:^40} | {2:<25} | {3:^5} | {4:<10} | {5:<8} | {6:^6} | {7:^6}".format(
-                id_, new_name, new_cat, verif, age, size, peers, leech))
+            name = name[:40]
+
+        data = {'id_': id_, 'name': name, 'cat': cat, 'verif': verif, 'age': age,
+                'size': size, 'peers': peers, 'leech': leech}
+        z = {**data, **width}
+
+        click.echo(row.format(**z))
