@@ -8,8 +8,9 @@ from .utils.url import parse_search, get_url
 @click.argument('search',  nargs=-1, required=False)
 @click.option('--verified', '-v', is_flag=True, help='Search only for verified torrents')
 @click.option('--adult', '-a', is_flag=True, help='Search only for safe torrents')
+@click.option('--limit-rows', '-l', default=25, help='Limit the number of output rows')
 @click.option('--sort-by', type=click.Choice(['peers', 'date', 'rating', 'size']))
-def main(search, verified, adult, sort_by):
+def main(search, verified, adult, sort_by, limit_rows):
     """seach and get infohash from torrentz2.eu"""
     click.clear()
 
@@ -47,6 +48,10 @@ def main(search, verified, adult, sort_by):
         '+'.join(search),
         safe_suffix)
 
+    process_demand(search_url, limit_rows)
+
+
+def  process_demand(search_url, limit_rows):
     click.echo(search_url)
     click.echo('downloading ...')
     html_text = get_url(search_url)
@@ -54,4 +59,4 @@ def main(search, verified, adult, sort_by):
     total, table = parse_search(html_text)
 
     click.echo(total)
-    pretty_table(table)
+    pretty_table(table, limit_rows=limit_rows)
