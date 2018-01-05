@@ -2,6 +2,8 @@ import click
 
 from .utils.pretty_table import pretty_table
 from .utils.url import parse_search, get_url
+from .user_input import proccess_command
+from .api import *
 
 
 @click.command()
@@ -10,53 +12,26 @@ from .utils.url import parse_search, get_url
 @click.option('--adult', '-a', is_flag=True, help='Search only for safe torrents')
 @click.option('--limit-rows', '-l', default=25, help='Limit the number of output rows')
 @click.option('--sort-by', type=click.Choice(['peers', 'date', 'rating', 'size']))
-def main(search, verified, adult, sort_by, limit_rows):
+def main(**kwargs):
     """seach and get infohash from torrentz2.eu"""
-    click.clear()
-
-    if not search:
-        search = ''
-
-    if verified:
-        search_type = 'verified'
-    else:
-        search_type = 'search'
-
-    if sort_by:
-        if sort_by == 'peers':
-            if verified:
-                search_suffix = 'P'
-            else:
-                search_suffix = ''
-        if sort_by == 'date':
-            search_suffix = 'A'
-        if sort_by == 'rating':
-            search_suffix = 'N'
-        if sort_by == 'size':
-            search_suffix = 'S'
-    else:
-        search_suffix = ''
-
-    if adult:
-        safe_suffix = '&safe=0'
-    else:
-        safe_suffix = '&safe=1'
-
-    search_url = 'https://torrentz2.eu/{0}{1}?f={2}{3}'.format(
-        search_type,
-        search_suffix,
-        '+'.join(search),
-        safe_suffix)
-
+    search_url = urlize(**kwargs)
+    limit_rows = kwargs['limit_rows']
     process_demand(search_url, limit_rows)
 
 
-def  process_demand(search_url, limit_rows):
-    click.echo(search_url)
-    click.echo('downloading ...')
+def process_demand(search_url, limit_rows):
+    # click.echo('downloading ...')
     html_text = get_url(search_url)
-    click.echo('parsing ...')
+    # click.echo('parsing ...')
     total, table = parse_search(html_text)
 
     click.echo(total)
     pretty_table(table, limit_rows=limit_rows)
+    while True:
+        result = proccess_command(input(':: '))
+        if result is None:
+            continue
+        else:
+            # append magnets to file
+            for i in result:
+                click.echo('Downloading #{}',format(i))
