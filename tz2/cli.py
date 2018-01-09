@@ -1,9 +1,9 @@
 import click
 
 from .utils.pretty_table import pretty_table
-from .utils.url import parse_search, get_url
+from .utils.url import parse_search, get_url, parse_link
 from .user_input import proccess_command
-from .api import *
+from .api import urlize, magnetize
 
 
 @click.command()
@@ -34,4 +34,8 @@ def process_demand(search_url, limit_rows):
         else:
             # append magnets to file
             for i in result:
-                click.echo('Downloading #{}',format(i))
+                click.echo('Downloading #{}'.format(i))
+                print(table[int(i)])
+                html_text = get_url(table[int(i)][-1])
+                hashinfo, trackers = parse_link(html_text)
+                print('LINK:', magnetize(hashinfo, trackers))
