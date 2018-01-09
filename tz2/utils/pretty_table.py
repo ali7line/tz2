@@ -7,7 +7,7 @@ def remove_nonlatin(text):
 
 
 def pretty_table(table, limit_rows=25):
-    width = {'w_id': 4, 'w_name': 40, 'w_cat': 25, 'w_verif': 5, 'w_age': 10, 'w_size': 8, 'w_peers': 6, 'w_leech': 6}
+    width = {'w_id': 4, 'w_name': 60, 'w_cat': 25, 'w_verif': 5, 'w_age': 10, 'w_size': 8, 'w_peers': 6, 'w_leech': 6}
     total_width = sum(width.values()) + 3*8
 
     row = "{id_:>{w_id}} | {name:^{w_name}} | {cat:^{w_cat}} | {verif:^{w_verif}} | " + \
