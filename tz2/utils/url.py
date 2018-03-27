@@ -8,7 +8,7 @@ def wait_for_table(browser):
         if browser.title == 'Search torrent':
             return True
         else:
-            sleep(0.5)
+            sleep(1)
     raise "Page did not load"
 
 
