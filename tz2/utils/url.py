@@ -1,12 +1,31 @@
 from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
+from selenium import webdriver
+from time import sleep
 
 
-def get_url(url):
-    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    html = urlopen(req)
-    html_text = html.read()
-    return html_text
+def wait_for_table(browser):
+    for i in range(20):
+        if browser.title == 'Search torrent':
+            return True
+        else:
+            sleep(0.5)
+    raise "Page did not load"
+
+
+
+def get_url(url, browser=None):
+    if not browser:
+        profile = webdriver.FirefoxProfile()
+        profile.set_preference("network.proxy.type", 1)
+        profile.set_preference("network.proxy.socks", 'localhost')
+        profile.set_preference("network.proxy.socks_port", 8082)
+        profile.set_preference("network.proxy.socks_remote_dns", True)
+        browser = webdriver.Firefox(firefox_profile=profile)
+        browser.get(url)
+        wait_for_table(browser)
+
+    html_text = browser.page_source
+    return html_text, browser
 
 
 def parse_search(html_text):

@@ -21,7 +21,7 @@ def main(**kwargs):
 
 def process_demand(search_url, limit_rows):
     # click.echo('downloading ...')
-    html_text = get_url(search_url)
+    html_text, browser = get_url(search_url)
     # click.echo('parsing ...')
     total, table = parse_search(html_text)
 
@@ -36,6 +36,6 @@ def process_demand(search_url, limit_rows):
             for i in result:
                 click.echo('Downloading #{}'.format(i))
                 print(table[int(i)])
-                html_text = get_url(table[int(i)][-1])
+                html_text = get_url(table[int(i)][-1], browser)
                 hashinfo, trackers = parse_link(html_text)
                 print('LINK:', magnetize(hashinfo, trackers))
