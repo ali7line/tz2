@@ -1,9 +1,9 @@
 import click
 
-from .utils.pretty_table import pretty_table
-from .utils.url import parse_search, get_url, parse_link
+from .model import Result, Browser
+
+from .utils import ptable, magnetize, urlize
 from .user_input import proccess_command
-from .api import urlize, magnetize
 
 
 @click.command()
@@ -21,12 +21,13 @@ def main(**kwargs):
 
 def process_demand(search_url, limit_rows):
     # click.echo('downloading ...')
+    driver = Browser(search_url)
     html_text, browser = get_url(search_url)
     # click.echo('parsing ...')
     total, table = parse_search(html_text)
 
     click.echo(total)
-    pretty_table(table, limit_rows=limit_rows)
+    ptable(table, limit_rows=limit_rows)
     while True:
         result = proccess_command(input(':: '))
         if result is None:
