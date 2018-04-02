@@ -22,21 +22,21 @@ def main(**kwargs):
 def process_demand(search_url, limit_rows):
     # click.echo('downloading ...')
     driver = Browser(search_url)
-    html_text, browser = get_url(search_url)
+    driver.get(search_url)
     # click.echo('parsing ...')
-    total, table = parse_search(html_text)
-
-    click.echo(total)
-    ptable(table, limit_rows=limit_rows)
+    results = driver.parse_search_page()
+    print(len(results))
+    for i in range(len(results)):
+        print(i, results[i].name)
+    # ptable(table, limit_rows=limit_rows)
     while True:
-        result = proccess_command(input(':: '))
-        if result is None:
+        requests = proccess_command(input(':: '))
+        if requests is None:
             continue
         else:
             # append magnets to file
-            for i in result:
+            for i in requests:
                 click.echo('Downloading #{}'.format(i))
-                print(table[int(i)])
-                html_text = get_url(table[int(i)][-1], browser)
-                hashinfo, trackers = parse_link(html_text)
-                print('LINK:', magnetize(hashinfo, trackers))
+                html_text = driver.get(results[i].link)
+                driver.parse_torrent_page(results[i])
+                print('LINK:', result[i].magnet)

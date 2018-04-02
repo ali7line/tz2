@@ -68,6 +68,10 @@ class Browser():
 
             keys =('name', 'tags', 'link', 'verified', 'age', 'size', 'seed', 'leech',)
             values = (name , tags, link, verified, age, size, seed, leech,)
+            r = dict(zip(keys,values)) 
+            results.append(Result(**r))
+
+        return results
 
 
     def parse_torrent_page(self, result):
